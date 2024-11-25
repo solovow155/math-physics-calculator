@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical & Physics Calculator</title>
+    
+    <!-- Add math.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        input {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            max-width: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .calculation {
+            font-size: 16px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Mathematical & Physics Calculator</h1>
+
+        <h2>Select Category</h2>
+        <select id="category" onchange="updateProblemSelection()">
+            <option value="math">Math</option>
+            <option value="physics">Physics</option>
+        </select>
+
+        <!-- Math Section -->
+        <div id="mathSection" class="section">
+            <h2>Select Math Problem</h2>
+            <select id="mathProblem" onchange="updateMathInputs()">
+                <option value="area">Area Calculation</option>
+                <option value="quadratic">Quadratic Equation</option>
+                <option value="equation">Linear Equation</option>
+                <option value="trigonometry">Trigonometry</option>
+                <option value="matrix">Matrix Operations</option>
+                <option value="derivatives">Derivative Calculation</option>
+            </select>
+
+            <!-- Area Inputs -->
+            <div id="areaInputs" class="inputs">
+                <h3>Area Calculation</h3>
+                <select id="shape" onchange="updateShapeInputs()">
+                    <option value="circle">Circle</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="triangle">Triangle</option>
+                </select>
+                <div id="circleInputs" class="inputFields">
+                    <input type="number" id="radius" placeholder="Enter radius" />
+                </div>
+                <div id="rectangleInputs" class="inputFields" style="display:none;">
+                    <input type="number" id="length" placeholder="Enter length" />
+                    <input type="number" id="width" placeholder="Enter width" />
+                </div>
+                <div id="triangleInputs" class="inputFields" style="display:none;">
+                    <input type="number" id="base" placeholder="Enter base" />
+                    <input type="number" id="height" placeholder="Enter height" />
+                </div>
+            </div>
+
+            <!-- Quadratic Equation Inputs -->
+            <div id="quadraticInputs" class="inputs" style="display:none;">
+                <h3>Quadratic Equation</h3>
+                <input type="number" id="a" placeholder="Enter a (coefficient of x²)" />
+                <input type="number" id="b" placeholder="Enter b (coefficient of x)" />
+                <input type="number" id="c" placeholder="Enter c (constant term)" />
+            </div>
+
+            <!-- Linear Equation Inputs -->
+            <div id="equationInputs" class="inputs" style="display:none;">
+                <h3>Linear Equation (ax + b = 0)</h3>
+                <input type="number" id="m" placeholder="Enter m (slope)" />
+                <input type="number" id="b_eq" placeholder="Enter b (intercept)" />
+            </div>
+
+            <!-- Trigonometry Inputs -->
+            <div id="trigInputs" class="inputs" style="display:none;">
+                <h3>Trigonometric Calculation</h3>
+                <select id="trigFunction" onchange="updateTrigInputs()">
+                    <option value="sin">Sin</option>
+                    <option value="cos">Cos</option>
+                    <option value="tan">Tan</option>
+                </select>
+                <input type="number" id="angle" placeholder="Enter angle in degrees" />
+            </div>
+
+            <!-- Matrix Inputs -->
+            <div id="matrixInputs" class="inputs" style="display:none;">
+                <h3>Matrix Operations</h3>
+                <textarea id="matrix1" placeholder="Enter first matrix (e.g., [[1,2], [3,4]])"></textarea>
+                <textarea id="matrix2" placeholder="Enter second matrix (optional, for operations like multiplication)"></textarea>
+            </div>
+
+            <!-- Derivative Inputs -->
+            <div id="derivativeInputs" class="inputs" style="display:none;">
+                <h3>Derivative Calculation</h3>
+                <input type="text" id="function" placeholder="Enter function (e.g., x^2 + 3x)" />
+            </div>
+        </div>
+
+        <!-- Physics Section -->
+        <div id="physicsSection" class="section" style="display:none;">
+            <h2>Select Physics Problem</h2>
+            <select id="physicsProblem" onchange="updatePhysicsInputs()">
+                <option value="speed">Speed Calculation</option>
+                <option value="force">Force Calculation</option>
+                <option value="energy">Energy Calculation</option>
+                <option value="ohm">Ohm's Law</option>
+                <option value="work">Work Calculation</option>
+            </select>
+            
+            <!-- Speed Inputs -->
+            <div id="speedInputs" class="inputs">
+                <h3>Speed Calculation</h3>
+                <input type="number" id="distance" placeholder="Enter distance" />
+                <input type="number" id="time" placeholder="Enter time" />
+            </div>
+
+            <!-- Force Inputs -->
+            <div id="forceInputs" class="inputs" style="display:none;">
+                <h3>Force Calculation</h3>
+                <input type="number" id="mass" placeholder="Enter mass" />
+                <input type="number" id="acceleration" placeholder="Enter acceleration" />
+            </div>
+
+            <!-- Energy Inputs -->
+            <div id="energyInputs" class="inputs" style="display:none;">
+                <h3>Energy Calculation</h3>
+                <input type="number" id="mass_energy" placeholder="Enter mass" />
+                <input type="number" id="velocity" placeholder="Enter velocity" />
+            </div>
+
+            <!-- Ohm's Law Inputs -->
+            <div id="ohmInputs" class="inputs" style="display:none;">
+                <h3>Ohm's Law Calculation</h3>
+                <input type="number" id="voltage" placeholder="Enter voltage" />
+                <input type="number" id="resistance" placeholder="Enter resistance" />
+            </div>
+
+            <!-- Work Inputs -->
+            <div id="workInputs" class="inputs" style="display:none;">
+                <h3>Work Calculation</h3>
+                <input type="number" id="force_work" placeholder="Enter force" />
+                <input type="number" id="distance_work" placeholder="Enter distance" />
+            </div>
+        </div>
+
+        <button onclick="calculate()">Calculate</button>
+
+        <!-- Display Result and Calculation Steps -->
+        <div class="result" id="result"></div>
+        <div class="calculation" id="calculation"></div>
+    </div>
+
+    <script>
+        // Function to update math problem options based on selected category
+        function updateProblemSelection() {
+            var category = document.getElementById('category').value;
+            if (category === 'math') {
+                document.getElementById('mathSection').style.display = 'block';
+                document.getElementById('physicsSection').style.display = 'none';
+            } else {
+                document.getElementById('mathSection').style.display = 'none';
+                document.getElementById('physicsSection').style.display = 'block';
+            }
+        }
+
+        // Function to show inputs for the selected math problem
+        function updateMathInputs() {
+            var problem = document.getElementById('mathProblem').value;
+            document.querySelectorAll('.inputs').forEach(function(inputDiv) {
+                inputDiv.style.display = 'none';
+            });
+
+            if (problem === 'area') {
+                document.getElementById('areaInputs').style.display = 'block';
+            } else if (problem === 'quadratic') {
+                document.getElementById('quadraticInputs').style.display = 'block';
+            } else if (problem === 'equation') {
+                document.getElementById('equationInputs').style.display = 'block';
+            } else if (problem === 'trigonometry') {
+                document.getElementById('trigInputs').style.display = 'block';
+            } else if (problem === 'matrix') {
+                document.getElementById('matrixInputs').style.display = 'block';
+            } else if (problem === 'derivatives') {
+                document.getElementById('derivativeInputs').style.display = 'block';
+            }
+        }
+
+        // Function to update physics problem inputs
+        function updatePhysicsInputs() {
+            var problem = document.getElementById('physicsProblem').value;
+            document.querySelectorAll('.inputs').forEach(function(inputDiv) {
+                inputDiv.style.display = 'none';
+            });
+
+            if (problem === 'speed') {
+                document.getElementById('speedInputs').style.display = 'block';
+            } else if (problem === 'force') {
+                document.getElementById('forceInputs').style.display = 'block';
+            } else if (problem === 'energy') {
+                document.getElementById('energyInputs').style.display = 'block';
+            } else if (problem === 'ohm') {
+                document.getElementById('ohmInputs').style.display = 'block';
+            } else if (problem === 'work') {
+                document.getElementById('workInputs').style.display = 'block';
+            }
+        }
+
+        // Calculation logic for both math and physics
+        function calculate() {
+            var category = document.getElementById('category').value;
+            var result = '';
+            var steps = '';
+
+            if (category === 'math') {
+                var mathProblem = document.getElementById('mathProblem').value;
+
+                // Handle different math problems
+                if (mathProblem === 'area') {
+                    var shape = document.getElementById('shape').value;
+                    if (shape === 'circle') {
+                        var radius = parseFloat(document.getElementById('radius').value);
+                        if (isNaN(radius) || radius <= 0) {
+                            result = 'Please enter a valid radius.';
+                        } else {
+                            var area = math.pi * math.pow(radius, 2);
+                            result = `Area of the circle: ${area.toFixed(2)} square units`;
+                            steps = `Formula: Area = π * radius²\nArea = π * ${radius}² = ${area.toFixed(2)} square units`;
+                        }
+                    } else if (shape === 'rectangle') {
+                        var length = parseFloat(document.getElementById('length').value);
+                        var width = parseFloat(document.getElementById('width').value);
+                        if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+                            result = 'Please enter valid length and width.';
+                        } else {
+                            var area = length * width;
+                            result = `Area of the rectangle: ${area.toFixed(2)} square units`;
+                            steps = `Formula: Area = length * width\nArea = ${length} * ${width} = ${area.toFixed(2)} square units`;
+                        }
+                    } else if (shape === 'triangle') {
+                        var base = parseFloat(document.getElementById('base').value);
+                        var height = parseFloat(document.getElementById('height').value);
+                        if (isNaN(base) || isNaN(height) || base <= 0 || height <= 0) {
+                            result = 'Please enter valid base and height.';
+                        } else {
+                            var area = 0.5 * base * height;
+                            result = `Area of the triangle: ${area.toFixed(2)} square units`;
+                            steps = `Formula: Area = 0.5 * base * height\nArea = 0.5 * ${base} * ${height} = ${area.toFixed(2)} square units`;
+                        }
+                    }
+                } else if (mathProblem === 'quadratic') {
+                    var a = parseFloat(document.getElementById('a').value);
+                    var b = parseFloat(document.getElementById('b').value);
+                    var c = parseFloat(document.getElementById('c').value);
+                    if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                        result = 'Please enter valid values for a, b, and c.';
+                    } else {
+                        var discriminant = math.subtract(math.pow(b, 2), math.multiply(4, a, c));
+                        if (discriminant < 0) {
+                            result = 'No real solutions.';
+                        } else {
+                            var root1 = math.divide(math.subtract(-b, math.sqrt(discriminant)), math.multiply(2, a));
+                            var root2 = math.divide(math.add(-b, math.sqrt(discriminant)), math.multiply(2, a));
+                            result = `Root 1: ${root1}\nRoot 2: ${root2}`;
+                            steps = `Quadratic formula: x = (-b ± √(b² - 4ac)) / 2a\nDiscriminant = b² - 4ac = ${math.pow(b, 2)} - 4 * ${a} * ${c} = ${discriminant}\nRoots: x₁ = ${root1}, x₂ = ${root2}`;
+                        }
+                    }
+                } else if (mathProblem === 'equation') {
+                    var m = parseFloat(document.getElementById('m').value);
+                    var b_eq = parseFloat(document.getElementById('b_eq').value);
+                    if (isNaN(m) || isNaN(b_eq)) {
+                        result = 'Please enter valid values for slope and intercept.';
+                    } else {
+                        var x = math.divide(-b_eq, m);
+                        result = `Solution for x: ${x}`;
+                        steps = `Formula: ax + b = 0 → x = -b/a\nx = -${b_eq} / ${m} = ${x}`;
+                    }
+                }
+                else if (mathProblem === 'trigonometry') {
+                    var angle = parseFloat(document.getElementById('angle').value);
+                    var trigFunc = document.getElementById('trigFunction').value;
+                    var angleInRadians = math.unit(angle, 'deg').toNumber('rad');
+
+                    if (trigFunc === 'sin') {
+                        result = `sin(${angle}) = ${math.sin(angleInRadians)}`;
+                    } else if (trigFunc === 'cos') {
+                        result = `cos(${angle}) = ${math.cos(angleInRadians)}`;
+                    } else if (trigFunc === 'tan') {
+                        result = `tan(${angle}) = ${math.tan(angleInRadians)}`;
+                    }
+                    steps = `Formula: ${trigFunc}(${angle}) = ${result}`;
+                }
+            }
+            else if (category === 'physics') {
+                var physicsProblem = document.getElementById('physicsProblem').value;
+
+                // Handle different physics problems
+                if (physicsProblem === 'speed') {
+                    var distance = parseFloat(document.getElementById('distance').value);
+                    var time = parseFloat(document.getElementById('time').value);
+                    if (isNaN(distance) || isNaN(time) || time <= 0) {
+                        result = 'Please enter valid distance and time.';
+                    } else {
+                        var speed = math.divide(distance, time);
+                        result = `Speed: ${speed.toFixed(2)} units/time`;
+                        steps = `Formula: Speed = distance / time\nSpeed = ${distance} / ${time} = ${speed.toFixed(2)} units/time`;
+                    }
+                }
+                else if (physicsProblem === 'force') {
+                    var mass = parseFloat(document.getElementById('mass').value);
+                    var acceleration = parseFloat(document.getElementById('acceleration').value);
+                    if (isNaN(mass) || isNaN(acceleration)) {
+                        result = 'Please enter valid mass and acceleration.';
+                    } else {
+                        var force = math.multiply(mass, acceleration);
+                        result = `Force: ${force.toFixed(2)} N (Newtons)`;
+                        steps = `Formula: Force = mass * acceleration\nForce = ${mass} * ${acceleration} = ${force.toFixed(2)} N`;
+                    }
+                }
+            }
+
+            document.getElementById('result').innerText = result;
+            document.getElementById('calculation').innerText = steps;
+        }
+    </script>
+
+</body>
+</html>
